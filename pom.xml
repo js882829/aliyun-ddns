@@ -6,7 +6,13 @@
 
     <groupId>cn.howardliu</groupId>
     <artifactId>aliyun-ddns</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <version>1.0.0-RELEASE</version>
+    <modules>
+        <module>aliyun-ddns-client</module>
+        <module>aliyun-ddns-provider-ipEcho</module>
+        <module>aliyun-ddns-runner</module>
+    </modules>
 
     <properties>
         <dependency.slf4j.version>1.7.21</dependency.slf4j.version>
@@ -46,16 +52,6 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.aliyun</groupId>
-            <artifactId>aliyun-java-sdk-alidns</artifactId>
-            <version>2.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.aliyun</groupId>
-            <artifactId>aliyun-java-sdk-core</artifactId>
-            <version>2.3.8</version>
-        </dependency>
-        <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${dependency.fastjson.version}</version>
@@ -68,7 +64,6 @@
     </dependencies>
 
     <build>
-        <finalName>${project.name}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -78,36 +73,6 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>target/lib</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
-
-    <repositories>
-        <repository>
-            <id>sonatype-nexus-staging</id>
-            <name>Sonatype Nexus Staging</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 </project>

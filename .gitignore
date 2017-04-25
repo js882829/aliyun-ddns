@@ -17,6 +17,8 @@ gen### JetBrains template
 .idea/**/libraries
 .idea/**/mongoSettings.xml
 *.iws
+target/
+sbin/lib/
 /out/
 .idea_modules/
 atlassian-ide-plugin.xml
@@ -25,7 +27,6 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 .metadata
-bin/
 tmp/
 *.tmp
 *.bak
