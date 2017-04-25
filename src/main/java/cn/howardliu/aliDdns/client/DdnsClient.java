@@ -1,6 +1,6 @@
 package cn.howardliu.aliDdns.client;
 
-import cn.howardliu.aliDdns.DdnsConfig;
+import cn.howardliu.aliDdns.config.DdnsConfig;
 import cn.howardliu.aliDdns.provider.WanIpProvider;
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;

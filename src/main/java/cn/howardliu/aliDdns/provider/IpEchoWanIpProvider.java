@@ -1,5 +1,7 @@
 package cn.howardliu.aliDdns.provider;
 
+import cn.howardliu.aliDdns.config.DdnsConfig;
+import cn.howardliu.aliDdns.config.IpEchoConfig;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,18 +18,30 @@ import java.util.Optional;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class IpEchoWanIpProvider implements WanIpProvider {
+public final class IpEchoWanIpProvider implements WanIpProvider {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
-    private String apiUri;
+    private IpEchoConfig config;
 
-    public IpEchoWanIpProvider(String apiUri) {
-        this.apiUri = Validate.notNull(apiUri);
+    @Override
+    public Class<IpEchoConfig> getConfigClass() {
+        return IpEchoConfig.class;
+    }
+
+    @Override
+    public IpEchoWanIpProvider setConfig(DdnsConfig config) {
+        if (config instanceof IpEchoConfig) {
+            this.config = Validate.notNull((IpEchoConfig) config);
+        } else {
+            throw new IllegalArgumentException("parameter must be extended cn.howardliu.aliDdns.config.IpEchoConfig");
+        }
+        return this;
     }
 
     @Override
     public Optional<String> wanIpV4Address() {
+        String apiUrl = this.config.getApiUrl();
         try {
-            URL url = new URL(this.apiUri);
+            URL url = new URL(apiUrl);
             InputStreamReader reader = new InputStreamReader(url.openStream());
             char[] buf = new char[1024];
             StringWriter writer = new StringWriter();
@@ -37,7 +51,7 @@ public class IpEchoWanIpProvider implements WanIpProvider {
             }
             return Optional.ofNullable(writer.toString());
         } catch (Exception e) {
-            logger.error("can't get WAN IP(IpV4) use \"" + this.apiUri + "\"", e);
+            logger.error("can't get WAN IP(IpV4) use \"" + apiUrl + "\"", e);
         }
         return Optional.empty();
     }

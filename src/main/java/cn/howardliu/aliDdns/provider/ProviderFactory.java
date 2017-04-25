@@ -12,10 +12,10 @@ import java.util.ServiceLoader;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class Provider {
+public final class ProviderFactory {
     public static WanIpProvider getWanIpProvider(String name) {
         ServiceLoader<ProviderDescriptor> loader = ServiceLoader.load(ProviderDescriptor.class,
-                Provider.class.getClassLoader());
+                ProviderFactory.class.getClassLoader());
         Iterator i$ = loader.iterator();
         ProviderDescriptor descriptor;
         do {

@@ -1,4 +1,4 @@
-package cn.howardliu.aliDdns;
+package cn.howardliu.aliDdns.config;
 
 /**
  * <br>created at 17-4-24
@@ -8,29 +8,19 @@ package cn.howardliu.aliDdns;
  * @since 1.0.0
  */
 public class DdnsConfig {
-    private String apiUrl;
-    private String accessKeyId;
-    private String accessKeySecret;
-    private Long checkInterval = 60000L;
-    private String domain;
-    private String rr;
+    protected String accessKeyId;
+    protected String accessKeySecret;
+    protected Long checkInterval = 60000L;
+    protected String domain;
+    protected String rr;
 
     public boolean isValid() {
-        return this.apiUrl != null
-                && this.accessKeyId != null
+        return this.accessKeyId != null
                 && this.accessKeySecret != null
                 && this.checkInterval != null
                 && this.checkInterval > 0
                 && this.domain != null
                 && this.rr != null;
-    }
-
-    public String getApiUrl() {
-        return apiUrl;
-    }
-
-    public void setApiUrl(String apiUrl) {
-        this.apiUrl = apiUrl;
     }
 
     public String getAccessKeyId() {

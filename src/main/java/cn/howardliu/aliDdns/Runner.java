@@ -1,7 +1,9 @@
 package cn.howardliu.aliDdns;
 
 import cn.howardliu.aliDdns.client.DdnsClient;
-import cn.howardliu.aliDdns.provider.IpEchoWanIpProvider;
+import cn.howardliu.aliDdns.config.DdnsConfig;
+import cn.howardliu.aliDdns.provider.ProviderFactory;
+import cn.howardliu.aliDdns.provider.WanIpProvider;
 import com.alibaba.fastjson.JSONReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +34,13 @@ public class Runner {
     private static Logger logger = LoggerFactory.getLogger(Runner.class);
 
     public static void main(String[] args) {
+        String providerName = System.getProperty("ddns.provider.name");
+        if (providerName == null || providerName.isEmpty()) {
+            System.err.println(
+                    "parameter ddns.provider.name can't be null or empty. use -Dddns.provider.name=\"the provider name you want to use\"");
+            System.exit(1);
+        }
+
         String home = System.getProperty("ddns.home");
         File homeDir = new File(home);
         File logDir = new File(homeDir, "logs");
@@ -53,11 +62,14 @@ public class Runner {
         }
         try {
             JSONReader jsonReader = new JSONReader(new InputStreamReader(new FileInputStream(configJsonFileName)));
-            DdnsConfig config = jsonReader.readObject(DdnsConfig.class);
+            WanIpProvider wanIpProvider = ProviderFactory.getWanIpProvider(providerName);
+            //noinspection ConstantConditions
+            DdnsConfig config = jsonReader.readObject(wanIpProvider.getConfigClass());
             if (!config.isValid()) {
                 throw new DdnsConfigInvalidException();
             }
-            check(config, config.getApiUrl());
+            wanIpProvider.setConfig(config);
+            check(wanIpProvider, config);
         } catch (FileNotFoundException e) {
             logger.error("can't find \"" + configJsonFileName + "\", please check again!");
             System.exit(1);
@@ -67,22 +79,21 @@ public class Runner {
         }
     }
 
-    private static void check(DdnsConfig config, String apiUrl) {
-        IpEchoWanIpProvider provider = new IpEchoWanIpProvider(apiUrl);
+    private static void check(WanIpProvider provider, DdnsConfig config) {
         DdnsClient ddnsClient = DdnsClient.instance(config, provider);
         try {
             ddnsClient.checkAndUpdate();
         } catch (Exception e) {
+            logger.error("can't check/update domain record", e);
             ddnsClient.clean();
         }
-        check(config, apiUrl, config.getCheckInterval());
+        check(provider, config, config.getCheckInterval());
     }
 
-    private static void check(DdnsConfig config, String apiUrl, Long interval) {
+    private static void check(WanIpProvider provider, DdnsConfig config, Long interval) {
         try {
             ScheduledFuture<?> future = executor.schedule(
                     () -> {
-                        IpEchoWanIpProvider provider = new IpEchoWanIpProvider(apiUrl);
                         DdnsClient ddnsClient = DdnsClient.instance(config, provider);
                         try {
                             ddnsClient.checkAndUpdate();
@@ -95,9 +106,9 @@ public class Runner {
             );
             future.get();
         } catch (Exception e) {
-            logger.error("can't update domain record", e);
+            logger.error("can't check/update domain record", e);
         } finally {
-            check(config, apiUrl, interval);
+            check(provider, config, interval);
         }
     }
 }
