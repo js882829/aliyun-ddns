@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="log.home" value="${ddns.home}/logs"/>
+    <property name="log.name" value="ali-ddns"/>
+
+    <appender name="filelog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.home}/${log.name}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.home}/${log.name}.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%-5le %d [%t] %C{30}.%M\(\) \(%F:%L\) - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="filelog"/>
+    </root>
+</configuration>

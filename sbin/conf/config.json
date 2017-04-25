@@ -1,0 +1,8 @@
+{
+  "apiUrl": "http://ipecho.net/plain",
+  "accessKeyId": "",
+  "accessKeySecret": "",
+  "checkInterval": 60000,
+  "domain": "howardliu.cn",
+  "rr": "ds"
+}
